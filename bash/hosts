@@ -1,0 +1,6 @@
+[webservers]
+server1 ansible_host=192.168.10.101 ansible_ssh_private_key_file=/home/vagrant/server1/private_key ansible_user=vagrant
+server2 ansible_host=192.168.10.102 ansible_ssh_private_key_file=/home/vagrant/server2/private_key ansible_user=vagrant
+
+[database]
+server3 ansible_host=192.168.10.103 ansible_ssh_private_key_file=/home/vagrant/server3/private_key ansible_user=vagrant
