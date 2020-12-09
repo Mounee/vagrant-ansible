@@ -1,0 +1,88 @@
+# tasks file for serverRole
+---
+#Webservers
+- name: Install Apache2 and PHP
+  when: inventory_hostname in groups['webservers']
+  apt:
+    pkg:
+      - apache2
+      - php
+      - libapache2-mod-php
+      - php-mysql
+      - php-cli
+    state: latest 
+    update_cache: yes
+  register: nginxinstalled
+
+- name: Copy info.php file
+  when:
+    - inventory_hostname in groups['webservers']
+    - nginxinstalled is succeeded
+  copy: src=connect-1.php dest=/var/www/html/
+#Database
+- name: Install mysql
+  when:
+    - inventory_hostname in groups['database']
+  apt:
+    pkg:
+      - python3-pymysql
+      - mysql-server
+    state: latest
+    update_cache: yes
+  register: mysqlinstalled
+
+- name: Set root password of mysql
+  when:
+    - inventory_hostname in groups['database']
+  mysql_user:
+      name: root
+      password: root
+      login_unix_socket: /var/run/mysqld/mysqld.sock
+
+- name: Create database user with name 'root' and password with all database privileges for host patientApp-02
+  when:
+    - inventory_hostname in groups['database']
+  mysql_user:
+    login_user: root
+    login_password: root
+    name: root
+    password: root
+    host: '%'
+    priv: '*.*:ALL'
+    state: present
+
+- name: Removes all anonymous user accounts
+  when:
+    - inventory_hostname in groups['database']
+  mysql_user:
+      name: ''
+      host_all: yes
+      state: absent
+      login_user: root
+      login_password: root
+
+- name: Removes the MySQL test database
+  when:
+    - inventory_hostname in groups['database']
+  mysql_db:
+      name: test
+      state: absent
+      login_user: root
+      login_password: root
+
+- name: Create new database
+  when:
+    - inventory_hostname in groups['database']
+  mysql_db:
+      name: nieuweDatabase
+      state: present
+      login_user: root
+      login_password: root
+
+- name: Overwrite mysqld.cnf file
+  when:
+    - inventory_hostname in groups['database']
+    - mysqlinstalled is succeeded
+  copy: src=mysqld.cnf dest=/etc/mysql/mysql.conf.d/mysqld.cnf
+  notify:
+    - Reload Mysql

@@ -6,14 +6,14 @@ Vagrant.configure("2") do |config|
         server.vm.box = "ubuntu/groovy64"
         server.vm.hostname = "server#{i}"
 
-        server.vm.provision :shell, path: "bash/bootstrap-server.sh"
+        server.vm.provision :shell, path: "provision/bootstrap-server.sh"
         server.vm.network :private_network, ip: "192.168.10.10#{i}", virtualbox__intnet: "mynetwork"
         server.vm.network :forwarded_port, guest: 80, host: "1800#{i}"
         server.vm.network :forwarded_port, guest: 22, host: "1012#{i}", id: "ssh"
 
         server.vm.provider "virtualbox" do |v|
             v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
-            v.customize ["modifyvm", :id, "--memory", 512]
+            v.customize ["modifyvm", :id, "--memory", 1024]
             v.customize ["modifyvm", :id, "--name", "webserver-#{i}"]
             end
         end
@@ -21,7 +21,7 @@ Vagrant.configure("2") do |config|
 
     config.vm.define "ansible" do |ansible|
         ansible.vm.box = "ubuntu/groovy64"
-        ansible.vm.provision :shell, path: "bash/bootstrap-ansible.sh"
+        ansible.vm.provision :shell, path: "provision/bootstrap-ansible.sh"
         ansible.vm.network :private_network, ip: "192.168.10.104", virtualbox__intnet: "mynetwork"
         ansible.vm.network :forwarded_port, guest: 22, host: "10124", id: "ssh"
         ansible.vm.provider "virtualbox" do |v|

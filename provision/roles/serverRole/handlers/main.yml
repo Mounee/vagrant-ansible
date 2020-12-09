@@ -1,0 +1,4 @@
+---
+# handlers file for serverRole
+- name: Reload Mysql
+  service: name=mysql enabled=yes state=restarted

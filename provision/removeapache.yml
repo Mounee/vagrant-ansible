@@ -1,0 +1,7 @@
+---
+- hosts: all
+  user: vagrant
+  become: yes
+  tasks:
+    - name: Remove Apache2
+      apt: pkg=apache2 state=absent purge=yes
