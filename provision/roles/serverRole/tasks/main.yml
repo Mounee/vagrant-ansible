@@ -14,7 +14,7 @@
     update_cache: yes
   register: nginxinstalled
 
-- name: Copy info.php file
+- name: Copy connect-1.php file to webservers
   when:
     - inventory_hostname in groups['webservers']
     - nginxinstalled is succeeded
@@ -39,7 +39,7 @@
       password: root
       login_unix_socket: /var/run/mysqld/mysqld.sock
 
-- name: Create database user with name 'root' and password with all database privileges for host patientApp-02
+- name: Create database user with name 'root' and password with all database privileges
   when:
     - inventory_hostname in groups['database']
   mysql_user:
@@ -70,7 +70,7 @@
       login_user: root
       login_password: root
 
-- name: Create new database
+- name: Create new database with name 'nieuweDatabase'
   when:
     - inventory_hostname in groups['database']
   mysql_db:
@@ -79,7 +79,7 @@
       login_user: root
       login_password: root
 
-- name: Overwrite mysqld.cnf file
+- name: Overwrite mysqld.cnf file to allow connections outside of localhost
   when:
     - inventory_hostname in groups['database']
     - mysqlinstalled is succeeded
