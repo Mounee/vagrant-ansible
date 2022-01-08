@@ -1,4 +1,4 @@
-# vagrant-ansible by Mounir Challouk
+# vagrant-ansible by Mounir C
 
 <b> <p> Vagrant File </p> </b>
 
